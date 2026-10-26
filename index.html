@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Interaktif Sejarah Kelas XI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        history: {
+                            50: '#fdfbf7',
+                            100: '#f7f2e8',
+                            200: '#eee3cb',
+                            600: '#8c6d3f',
+                            700: '#6e522b',
+                            800: '#4a3619',
+                            900: '#2d200e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cinzel', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f7f2e8;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #8c6d3f;
+            border-radius: 4px;
+        }
+        .nav-btn.active {
+            background-color: #8c6d3f;
+            color: #ffffff;
+            border-color: #8c6d3f;
+        }
+    </style>
+</head>
+<body class="bg-history-50 text-gray-800 font-sans min-h-screen flex flex-col justify-between selection:bg-history-200 custom-scrollbar">
+
+    <!-- HEADER & NAVIGATION BAR -->
+    <header class="bg-history-900 text-amber-100 shadow-lg sticky top-0 z-50 border-b-4 border-history-600">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('kehadiran')">
+                <div class="bg-history-600 p-2.5 rounded-xl text-white shadow-md">
+                    <i class="fa-solid fa-scroll text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-serif text-lg sm:text-xl font-bold tracking-wide text-amber-200">PORTAL SEJARAH KELAS XI</h1>
+                    <p class="text-xs text-amber-300/80">Perlawanan Terhadap Kolonial Barat & Dampak Kolonialisme</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap justify-center items-center gap-2 bg-history-800/80 p-1.5 rounded-xl border border-history-700">
+                <button id="nav-kehadiran" onclick="switchTab('kehadiran')" class="nav-btn active px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center space-x-2 text-amber-200 hover:bg-history-700">
+                    <i class="fa-solid fa-clipboard-user"></i>
+                    <span>KEHADIRAN</span>
+                </button>
+                <button id="nav-materi" onclick="switchTab('materi')" class="nav-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center space-x-2 text-amber-200 hover:bg-history-700">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>MATERI</span>
+                </button>
+                <button id="nav-ujian" onclick="switchTab('ujian')" class="nav-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition flex items-center space-x-2 text-amber-200 hover:bg-history-700">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>UJIAN</span>
+                </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 flex-grow">
+
+        <!-- TAB 1: MENU DATA ISIAN KEHADIRAN -->
+        <section id="tab-kehadiran" class="tab-content max-w-xl mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-history-200">
+            <div class="text-center mb-6">
+                <span class="inline-block p-4 rounded-full bg-history-100 text-history-800 mb-3 shadow-inner">
+                    <i class="fa-solid fa-id-card text-3xl"></i>
+                </span>
+                <h2 class="text-2xl font-bold text-history-900 font-serif">DATA ISIAN KEHADIRAN</h2>
+                <p class="text-sm text-gray-600 mt-1">Silakan lengkapi data diri Anda sebelum mengakses Materi dan Ujian.</p>
+            </div>
+
+            <!-- Alert Indicator Registered Student -->
+            <div id="registered-badge" class="hidden mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm flex items-center space-x-3">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-xl"></i>
+                <div>
+                    <p class="font-bold">Identitas Siswa Terrekam!</p>
+                    <p id="registered-info-text" class="text-emerald-700 mt-0.5">Nama: - | Kelas: -</p>
+                </div>
+            </div>
+
+            <form id="form-identity" onsubmit="event.preventDefault(); saveIdentity();" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-history-800 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                    <input type="text" id="input-nama" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-history-600 focus:border-transparent outline-none transition" placeholder="Contoh: Ahmad Subardjo">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-history-800 mb-1">Kelas <span class="text-red-500">*</span></label>
+                    <select id="input-kelas" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-history-600 focus:border-transparent outline-none transition">
+                        <option value="" disabled selected>-- Pilih Kelas --</option>
+                        <option value="XI-1">XI-1</option>
+                        <option value="XI-2">XI-2</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-history-800 mb-1">Status Kehadiran <span class="text-red-500">*</span></label>
+                    <select id="input-kehadiran" required class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-history-600 focus:border-transparent outline-none transition">
+                        <option value="Hadir" selected>Hadir</option>
+                        <option value="Izin">Izin</option>
+                        <option value="Sakit">Sakit</option>
+                    </select>
+                </div>
+
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 text-xs text-amber-900 space-y-1">
+                    <p class="font-bold flex items-center"><i class="fa-solid fa-circle-info mr-1.5"></i> Alur Pembelajaran:</p>
+                    <ul class="list-disc list-inside space-y-0.5">
+                        <li>Simpan identitas diri (Data Kehadiran otomatis terkirim ke Google Sheet).</li>
+                        <li>Pelajari rangkuman materi pada menu <strong>MATERI</strong>.</li>
+                        <li>Kerjakan 30 soal pilihan ganda pada menu <strong>UJIAN</strong> (Skor Maksimal = 100).</li>
+                        <li>Klik tombol <strong>SIMPAN DATA UJIAN DAN KIRIM</strong> untuk langsung melihat skor dan mengirim nilai ke Google Sheet.</li>
+                    </ul>
+                </div>
+
+                <button type="submit" id="btn-save-attendance" class="w-full bg-history-800 hover:bg-history-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition transform active:scale-98 flex items-center justify-center space-x-2 text-sm sm:text-base">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>SIMPAN DATA KEHADIRAN & LANJUT MATERI</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- TAB 2: MENU MATERI PEMBELAJARAN -->
+        <section id="tab-materi" class="tab-content hidden space-y-6">
+            
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-history-200">
+                <div class="flex items-center space-x-3 border-b border-history-200 pb-4 mb-6">
+                    <div class="p-3 bg-history-100 rounded-xl text-history-800">
+                        <i class="fa-solid fa-book-bookmark text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-serif font-bold text-history-900">RANGKUMAN MATERI SEJARAH KELAS XI</h2>
+                        <p class="text-xs sm:text-sm text-gray-600">Perlawanan Terhadap Kolonialisme Barat & Dampak Penjajahan di Indonesia</p>
+                    </div>
+                </div>
+
+                <div class="space-y-8 text-sm sm:text-base leading-relaxed text-gray-700">
+                    
+                    <!-- MATERI 1 -->
+                    <article class="bg-history-50 p-5 sm:p-6 rounded-xl border-l-4 border-history-700 shadow-sm space-y-3">
+                        <h3 class="font-serif font-bold text-lg text-history-900 flex items-center">
+                            <i class="fa-solid fa-shield-halved text-history-700 mr-2"></i>
+                            1. Perlawanan Bangsa Indonesia Sebelum Abad ke-20
+                        </h3>
+                        <p>Latar belakang datangnya bangsa-bangsa Barat (Portugis, Spanyol, Belanda, dan Inggris) ke Nusantara adalah perburuan rempah-rempah serta semangat <strong>3G (Gold, Glory, Gospel)</strong>.</p>
+                        <p>Ciri khas perjuangan bangsa Indonesia sebelum abad ke-20:</p>
+                        <ul class="list-disc list-inside space-y-1 pl-2 text-xs sm:text-sm">
+                            <li>Bersifat kedaerahan/lokalitas.</li>
+                            <li>Sangat bergantung pada figur/sosok pemimpin karismatik.</li>
+                            <li>Menggunakan persenjataan tradisional.</li>
+                            <li>Mudah dipecah belah oleh Belanda menggunakan taktik <em>Devide et Impera</em>.</li>
+                        </ul>
+                    </article>
+
+                    <!-- MATERI 2 -->
+                    <article class="bg-amber-50/60 p-5 sm:p-6 rounded-xl border-l-4 border-amber-700 shadow-sm space-y-3">
+                        <h3 class="font-serif font-bold text-lg text-history-900 flex items-center">
+                            <i class="fa-solid fa-users-line text-amber-700 mr-2"></i>
+                            2. Tokoh-Tokoh Perlawanan Daerah
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                            <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                <strong class="text-history-900 block font-serif">Pangeran Diponegoro (1825–1830)</strong>
+                                Memimpin Perang Jawa dengan strategi gerilya. Belanda merespons dengan taktik <em>Benteng Stelsel</em>.
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                <strong class="text-history-900 block font-serif">Pattimura / Thomas Matulessy (1817)</strong>
+                                Pemimpin perlawanan rakyat Maluku terhadap kekejaman dan penindasan Belanda di Saparua.
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                <strong class="text-history-900 block font-serif">Sultan Hasanuddin (Gowa-Tallo)</strong>
+                                Dijuluki <em>Ayam Jantan dari Timur</em> karena gigih menentang monopoli perdagangan VOC.
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-gray-200">
+                                <strong class="text-history-900 block font-serif">Tuanku Imam Bonjol (Perang Padri)</strong>
+                                Memimpin perlawanan di Sumatera Barat yang bermula dari konflik internal Kaum Padri dan Kaum Adat.
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERI 3 -->
+                    <article class="bg-history-50 p-5 sm:p-6 rounded-xl border-l-4 border-history-700 shadow-sm space-y-3">
+                        <h3 class="font-serif font-bold text-lg text-history-900 flex items-center">
+                            <i class="fa-solid fa-building-columns text-history-700 mr-2"></i>
+                            3. Dampak Kolonialisme & Imperialisme Barat
+                        </h3>
+                        <p>Penjajahan Barat membawa perubahan dan dampak besar dalam berbagai bidang kehidupan di Nusantara:</p>
+                        <div class="space-y-2 text-xs sm:text-sm">
+                            <p><strong>• Bidang Politik:</strong> Para raja/bupati kehilangan kedaulatan dan berstatus menjadi pegawai pemerintah kolonial.</p>
+                            <p><strong>• Bidang Ekonomi:</strong> Pemberlakuan Sistem Tanam Paksa (<em>Cultuurstelsel</em>) dan Monetisasi (sistem uang) yang menjerat petani pada utang.</p>
+                            <p><strong>• Bidang Sosial-Budaya:</strong> Lahirnya stratifikasi sosial baru dan budaya akulturasi Indis (Eropa-Pribumi).</p>
+                            <p><strong>• Bidang Pendidikan:</strong> Pelaksanaan Politik Etis (Trias Van Deventer) menghasilkan golongan terpelajar yang merintis Pergerakan Nasional.</p>
+                        </div>
+                    </article>
+
+                </div>
+
+                <div class="mt-8 text-center border-t border-gray-200 pt-6">
+                    <button onclick="switchTab('ujian')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition transform active:scale-95 inline-flex items-center space-x-2 text-sm sm:text-base">
+                        <span>SUDAH PAHAM MATERI? MULAI UJIAN</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TAB 3: MENU UJIAN SEJARAH -->
+        <section id="tab-ujian" class="tab-content hidden space-y-6">
+            
+            <!-- SUB-SCREEN A: SCREEN PENGERJAAN SOAL -->
+            <div id="quiz-working-screen" class="space-y-6">
+                
+                <!-- Header Status Ujian -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-history-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div>
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider block">Status Peserta</span>
+                        <span id="quiz-student-badge" class="font-bold text-history-900 text-sm">Peserta: Belum Mengisi Kehadiran</span>
+                    </div>
+                    <div class="w-full sm:w-1/2">
+                        <div class="flex justify-between text-xs font-semibold text-gray-600 mb-1">
+                            <span>Kemajuan Pengerjaan (Pilihan Ganda)</span>
+                            <span id="progress-text">0 dari 30 Terjawab</span>
+                        </div>
+                        <div class="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="bg-history-700 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lembar Soal -->
+                <div class="bg-white rounded-2xl shadow-md border border-history-200 p-6 sm:p-8 flex flex-col justify-between min-h-[420px]">
+                    <div>
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-200 mb-4">
+                            <span class="font-serif font-bold text-history-900 text-lg sm:text-xl" id="question-badge">Soal Nomor 1</span>
+                            <span id="question-type-tag" class="text-xs font-semibold px-3 py-1 bg-history-100 text-history-800 rounded-full border border-history-200">
+                                Pilihan Ganda
+                            </span>
+                        </div>
+
+                        <!-- Teks Soal -->
+                        <div id="question-text" class="text-gray-800 text-base sm:text-lg leading-relaxed font-normal mb-6">
+                            <!-- Soal dinamis dimuat di sini -->
+                        </div>
+
+                        <!-- Opsi Jawaban -->
+                        <div id="options-container" class="space-y-3">
+                            <!-- Opsi dinamis dimuat di sini -->
+                        </div>
+                    </div>
+
+                    <!-- Action Navigation Bottom -->
+                    <div class="pt-6 border-t border-gray-200 flex flex-wrap justify-between items-center gap-3">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium text-sm flex items-center space-x-1.5 transition">
+                            <i class="fa-solid fa-chevron-left"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+
+                        <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2.5 bg-history-700 hover:bg-history-800 text-white rounded-lg font-medium text-sm flex items-center space-x-1.5 transition">
+                            <span>Berikutnya</span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                        <!-- Tombol Simpan Data Ujian & Kirim (Direct Call submitQuiz tanpa browser confirm) -->
+                        <button id="btn-submit-quiz" onclick="submitQuiz()" class="hidden px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm sm:text-base flex items-center space-x-2 transition shadow-lg transform active:scale-95">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>SIMPAN DATA UJIAN DAN KIRIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Number Selector -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-history-200">
+                    <p class="text-xs font-bold text-history-900 uppercase tracking-wider mb-3">Daftar Soal Pilihan Ganda (1-30):</p>
+                    <div id="number-grid" class="flex flex-wrap gap-2">
+                        <!-- Tombol nomor dinamis -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SUB-SCREEN B: DASHBOARD SISWA / MENU NILAI -->
+            <div id="quiz-score-screen" class="hidden max-w-2xl mx-auto space-y-6">
+                <div class="bg-white rounded-2xl shadow-xl border-2 border-history-600 p-6 sm:p-8 text-center">
+                    
+                    <div class="inline-flex items-center space-x-2 bg-history-100 px-4 py-1.5 rounded-full border border-history-300 text-history-900 mb-4">
+                        <i class="fa-solid fa-award text-history-700"></i>
+                        <span class="font-serif font-bold text-sm uppercase tracking-wider">DASHBOARD NILAI SISWA</span>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl font-bold font-serif text-history-900">REKAPITULASI HASIL UJIAN</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Evaluasi Pembelajaran Sejarah Indonesia Kelas XI</p>
+
+                    <!-- Card Informasi Siswa -->
+                    <div class="mt-6 text-left bg-gray-50 p-4 rounded-xl border border-gray-200 space-y-2 text-xs sm:text-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-2.5 bg-white rounded-lg border border-gray-100 shadow-sm">
+                                <span class="text-gray-500 text-xs block">Nama Peserta:</span>
+                                <span id="score-page-nama" class="font-bold text-history-900">-</span>
+                            </div>
+                            <div class="p-2.5 bg-white rounded-lg border border-gray-100 shadow-sm">
+                                <span class="text-gray-500 text-xs block">Kelas:</span>
+                                <span id="score-page-kelas" class="font-bold text-history-900">-</span>
+                            </div>
+                            <div class="p-2.5 bg-white rounded-lg border border-gray-100 shadow-sm">
+                                <span class="text-gray-500 text-xs block">Status Kehadiran:</span>
+                                <span id="score-page-kehadiran" class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 inline-block mt-0.5">-</span>
+                            </div>
+                            <div class="p-2.5 bg-white rounded-lg border border-gray-100 shadow-sm">
+                                <span class="text-gray-500 text-xs block">Waktu Selesai:</span>
+                                <span id="score-page-waktu" class="font-semibold text-gray-700">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Box Skor Utama Dashboard Siswa -->
+                    <div class="my-6 p-6 bg-history-50 rounded-2xl border-2 border-history-300 shadow-inner">
+                        <p class="text-xs font-bold uppercase tracking-widest text-history-700">SKOR YANG DIPEROLEH</p>
+                        <div id="score-page-nilai" class="text-6xl sm:text-7xl font-black text-history-900 my-3">0</div>
+                        
+                        <div class="grid grid-cols-2 gap-3 mt-4 text-xs sm:text-sm">
+                            <div class="bg-white p-3 rounded-xl border border-history-200 shadow-sm">
+                                <span class="text-gray-500 block text-xs">Jawaban Benar</span>
+                                <span id="score-page-correct-detail" class="text-lg font-bold text-emerald-600">0 / 30</span>
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border border-history-200 shadow-sm">
+                                <span class="text-gray-500 block text-xs">Persentase Kelulusan</span>
+                                <span id="score-page-percentage" class="text-lg font-bold text-history-800">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Pengiriman ke Google Sheet -->
+                    <div id="score-page-sheet-status" class="mb-5 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        <span>Mengirimkan data nilai ke Google Sheet...</span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-3">
+                        <button id="btn-manual-send-page" onclick="manualSendToSheet()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold py-3 px-4 rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Kirim / Kirim Ulang Nilai ke Google Sheet</span>
+                        </button>
+
+                        <button onclick="resetToHome()" class="w-full bg-history-800 hover:bg-history-900 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition active:scale-95 flex items-center justify-center space-x-2 text-sm sm:text-base">
+                            <i class="fa-solid fa-house"></i>
+                            <span>Selesai & Kembali ke Menu Kehadiran</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER IDENTITAS GURU -->
+    <footer class="bg-history-900 text-amber-200/90 py-4 border-t-2 border-history-600 mt-8">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <p class="text-sm font-semibold tracking-wide">
+                Guru Mata Pelajaran: <span class="text-amber-100 font-bold">Lily Ulfah Hani, S.Pd</span> ( SMAN 1 Katapang Kabupaten Bandung )
+            </p>
+            <p class="text-[11px] text-amber-400/60 mt-1">Modul Evaluasi Interaktif Sejarah Indonesia Kelas XI</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT LOGIKA APLIKASI WEB -->
+    <script>
+        // Google Apps Script Web App URL
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqhDFyWs57IhF0rivGsDu3sVpuOI1NglRG_mtqiqFIvKWDxEp5dDgntMU50rr9IIdEgA/exec";
+
+        // BANK SOAL (30 Pilihan Ganda)
+        const quizData = [
+            {
+                id: 1,
+                type: 'PG',
+                question: "Latar belakang utama kedatangan bangsa-bangsa Barat ke Nusantara pada abad ke-16 adalah...",
+                options: [
+                    "A. Membantu kerajaan lokal yang berselisih",
+                    "B. Mencari rempah-rempah dan mencari kejayaan (3G)",
+                    "C. Menyebarkan paham demokrasi modern",
+                    "D. Mendirikan pangkalan militer untuk Perang Dunia",
+                    "E. Membuka hubungan diplomatik antar benua"
+                ],
+                answer: 1
+            },
+            {
+                id: 2,
+                type: 'PG',
+                question: "Tokoh perlawanan rakyat Maluku terhadap kekejaman penjajahan Belanda pada tahun 1817 adalah...",
+                options: [
+                    "A. Sultan Hasanuddin",
+                    "B. Pangeran Diponegoro",
+                    "C. Thomas Matulessy (Pattimura)",
+                    "D. Tuanku Imam Bonjol",
+                    "E. Cut Nyak Dien"
+                ],
+                answer: 2
+            },
+            {
+                id: 3,
+                type: 'PG',
+                question: "Siasat Benteng Stelsel yang diterapkan oleh Jenderal De Kock dalam Perang Diponegoro bertujuan untuk...",
+                options: [
+                    "A. Mengisolasi pasukan Diponegoro dan mempersempit ruang geraknya",
+                    "B. Melindungi rakyat sipil dari serangan gerilya",
+                    "C. Menjalin kerja sama militer dengan kerajaan tetangga",
+                    "D. Melatih tentara pribumi menjadi pasukan modern",
+                    "E. Membangun benteng pertahanan dari serangan Inggris"
+                ],
+                answer: 0
+            },
+            {
+                id: 4,
+                type: 'PG',
+                question: "Perang Padri di Sumatera Barat pada mulanya merupakan konflik internal antara...",
+                options: [
+                    "A. Kaum Adat dengan Belanda",
+                    "B. Kaum Padri dengan Kerajaan Aceh",
+                    "C. Kaum Padri (Agama) dengan Kaum Adat",
+                    "D. Rakyat biasa dengan Bangsawan",
+                    "E. Sultan Siak dengan Tuanku Imam Bonjol"
+                ],
+                answer: 2
+            },
+            {
+                id: 5,
+                type: 'PG',
+                question: "Sultan Hasanuddin dari Makassar mendapat julukan 'Ayam Jantan dari Timur' dari Belanda karena...",
+                options: [
+                    "A. Keberaniannya menentang monopoli perdagangan VOC",
+                    "B. Keahliannya berunding dalam Perjanjian Bongaya",
+                    "C. Kekayaannya yang melimpah dari perdagangan rempah",
+                    "D. Strateginya memecah belah pasukan Belanda",
+                    "E. Kerjasamanya dengan pedagang Inggris"
+                ],
+                answer: 0
+            },
+            {
+                id: 6,
+                type: 'PG',
+                question: "Sistem Tanam Paksa (Cultuurstelsel) yang diberlakukan oleh Van den Bosch pada tahun 1830 sangat menyengsarakan rakyat karena...",
+                options: [
+                    "A. Hasil panen dibeli dengan harga sangat tinggi",
+                    "B. Praktik di lapangan memeras tenaga rakyat melampaui aturan resmi",
+                    "C. Petani diberi kebebasan memilih jenis tanaman eksport",
+                    "D. Belanda memberikan bantuan modal secara berkala",
+                    "E. Seluruh tanah petani dibeli secara paksa oleh VOC"
+                ],
+                answer: 1
+            },
+            {
+                id: 7,
+                type: 'PG',
+                question: "Dampak positif yang tidak disengaja dari pelaksanaan Politik Etis (Trias Van Deventer) dalam bidang edukasi bagi bangsa Indonesia adalah...",
+                options: [
+                    "A. Lahirnya golongan terpelajar yang merintis pergerakan nasional",
+                    "B. Meningkatnya kesejahteraan petani secara merata",
+                    "C. Hilangnya stratifikasi sosial di masyarakat",
+                    "D. Penghapusan sistem feodalisme secara total",
+                    "E. Bebasnya Indonesia dari kemiskinan"
+                ],
+                answer: 0
+            },
+            {
+                id: 8,
+                type: 'PG',
+                question: "Strategi perang gerilya yang diterapkan oleh Pangeran Diponegoro sangat menyulitkan Belanda karena...",
+                options: [
+                    "A. Diponegoro menggunakan senjata api modern dari Eropa",
+                    "B. Pasukan Diponegoro memanfaatkan penguasaan medan dan dukungan rakyat",
+                    "C. Belanda tidak memiliki tentara yang cukup di Jawa",
+                    "D. Diponegoro mendapat bantuan penuh dari Angkatan Laut Inggris",
+                    "E. Belanda dilarang keluar dari benteng pertahanan"
+                ],
+                answer: 1
+            },
+            {
+                id: 9,
+                type: 'PG',
+                question: "Penyebab utama terjadinya Perang Banjar yang dipimpin oleh Pangeran Antasari adalah...",
+                options: [
+                    "A. Pembagian hasil tambang batu bara yang tidak adil",
+                    "B. Campur tangan Belanda dalam urusan tahta Kesultanan Banjar",
+                    "C. Penolakan rakyat membayar pajak perahu",
+                    "D. Pembakaran istana oleh pasukan Portugis",
+                    "E. Pelarangan kegiatan keagamaan oleh Batavia"
+                ],
+                answer: 1
+            },
+            {
+                id: 10,
+                type: 'PG',
+                question: "Dampak kolonialisme Barat dalam bidang politik dan pemerintahan di Nusantara adalah...",
+                options: [
+                    "A. Para raja dan bupati kehilangan kedaulatan serta menjadi pegawai pemerintah kolonial",
+                    "B. Raja-raja lokal semakin kuat dan mandiri",
+                    "C. Terbentuknya sistem pemerintahan berdasar hukum adat daerah",
+                    "D. Rakyat bebas memilih pemimpin wilayah secara demokratis",
+                    "E. Hilangnya peran gubernur jenderal di Batavia"
+                ],
+                answer: 0
+            },
+            {
+                id: 11,
+                type: 'PG',
+                question: "Perjanjian Bongaya tahun 1667 antara Kesultanan Gowa dan VOC berisi tentang...",
+                options: [
+                    "A. Pengakuan kedaulatan penuh Sultan Hasanuddin",
+                    "B. Penyerahan monopoli perdagangan Makassar kepada VOC",
+                    "C. Pembagian wilayah Jawa menjadi dua bagian",
+                    "D. Kerja sama pertahanan menghadapi Inggris",
+                    "E. Penutupan pelabuhan bagi seluruh kapal asing"
+                ],
+                answer: 1
+            },
+            {
+                id: 12,
+                type: 'PG',
+                question: "Perlawanan rakyat Aceh yang berlangsung sangat lama dan menyulitkan Belanda akhirnya diredam setelah Belanda mengutus...",
+                options: [
+                    "A. Van Heutsz melakukan pendekatan budaya",
+                    "B. Snouck Hurgronje menganalisis kelemahan sosial-keagamaan masyarakat Aceh",
+                    "C. Jenderal Kock membangun benteng di Sabang",
+                    "D. Van den Bosch menerapkan Tanam Paksa di Aceh",
+                    "E. Daendels membangun jalan raya perdagangan"
+                ],
+                answer: 1
+            },
+            {
+                id: 13,
+                type: 'PG',
+                question: "Gubernur Jenderal Herman Willem Daendels membangun Jalan Raya Pos (Grote Postweg) dari Anyer sampai Panarukan dengan tujuan utama...",
+                options: [
+                    "A. Meningkatkan taraf hidup petani lokal",
+                    "B. Mempermudah mobilisasi militer untuk mempertahankan Jawa dari Inggris",
+                    "C. Membuka jalur pariwisata Jawa Barat",
+                    "D. Menghubungkan seluruh kerajaan feodal di Jawa",
+                    "E. Memenuhi janji pembangunan dari Raja Belanda"
+                ],
+                answer: 1
+            },
+            {
+                id: 14,
+                type: 'PG',
+                question: "Karya sastra tulisan Multatuli (Eduard Douwes Dekker) yang mengkritik kekejaman Tanam Paksa di Lebak, Banten berjudul...",
+                options: [
+                    "A. Suiker Contracten",
+                    "B. Als Ik Eens Nederlander Was",
+                    "C. Max Havelaar",
+                    "D. Habis Gelap Terbitlah Terang",
+                    "E. Indonesia Menggugat"
+                ],
+                answer: 2
+            },
+            {
+                id: 15,
+                type: 'PG',
+                question: "Perlawanan Sisingamangaraja XII di Sumatera Utara melawan Belanda terutama disebabkan oleh...",
+                options: [
+                    "A. Penolakan perluasan kekuasaan Belanda dan ancaman terhadap tatanan tradisional di Tapanuli",
+                    "B. Sengketa batas wilayah perkebunan teh",
+                    "C. Penangkapan para ulama di Medan",
+                    "D. Monopoli perdagangan rempah di Danau Toba",
+                    "E. Perebutan takhta Kesultanan Deli"
+                ],
+                answer: 0
+            },
+            {
+                id: 16,
+                type: 'PG',
+                question: "Dampak kolonialisme di bidang sosial-budaya tampak pada berkembangnya pola kehidupan...",
+                options: [
+                    "A. Egaliter tanpa perbedaan kelas",
+                    "B. Kebudayaan Indis (akulturasi budaya Eropa dan lokal)",
+                    "C. Dominasi penuh budaya Melayu di seluruh daerah",
+                    "D. Pembagian tanah secara adil bagi seluruh rakyat",
+                    "E. Penurunan tingkat urbanisasi ke kota-kota besar"
+                ],
+                answer: 1
+            },
+            {
+                id: 17,
+                type: 'PG',
+                question: "Perang Puputan di Bali dipicu oleh perselisihan mengenai Hak Tawan Karang, yaitu...",
+                options: [
+                    "A. Hak raja Bali untuk memungut pajak atas pedagang asing",
+                    "B. Hak raja Bali untuk menguasai kapal yang terdampar di perairan Bali",
+                    "C. Hak Belanda mendirikan benteng di Pantai Kuta",
+                    "D. Kewajiban menyembah Gubernur Jenderal Belanda",
+                    "E. Pelarangan tradisi keagamaan oleh pemerintah kolonial"
+                ],
+                answer: 1
+            },
+            {
+                id: 18,
+                type: 'PG',
+                question: "Salah satu dampak negatif Westernisasi pada masa kolonial terhadap kebudayaan asli pribumi adalah...",
+                options: [
+                    "A. Menguatnya rasa persatuan nasionalis",
+                    "B. Terkikisnya nilai-nilai tradisi dan bahasa lokal di kalangan elit tertentu",
+                    "C. Meningkatnya kualitas arsitektur bambu",
+                    "D. Penurunan minat terhadap musik modern",
+                    "E. Berkembangnya pencak silat ke luar negeri"
+                ],
+                answer: 1
+            },
+            {
+                id: 19,
+                type: 'PG',
+                question: "Sistem Ekonomi Uang (Monetisasi) yang diperkenalkan penjajah Belanda mengakibatkan...",
+                options: [
+                    "A. Petani semakin mandiri dan bebas hutang",
+                    "B. Terikatnya petani pada sistem utang dan lintah darat (sistem ijon)",
+                    "C. Hilangnya penggunaan mata uang kertas",
+                    "D. Kemudahan rakyat membeli barang impor secara serentak",
+                    "E. Terhapusnya sistem pologoro atau kerja rodi"
+                ],
+                answer: 1
+            },
+            {
+                id: 20,
+                type: 'PG',
+                question: "Faktor internal yang menyebabkan kegagalan berbagai perlawanan daerah melawan kolonialisme sebelum abad ke-20 adalah...",
+                options: [
+                    "A. Persenjataan rakyat sudah terlalu modern",
+                    "B. Perlawanan masih bersifat kedaerahan dan mudah diadu domba (devide et impera)",
+                    "C. Pemimpin perjuangan selalu berasal dari kalangan terpelajar",
+                    "D. Adanya dukungan penuh dari negara tetangga",
+                    "E. Jumlah pasukan pribumi selalu lebih sedikit dibanding Belanda"
+                ],
+                answer: 1
+            },
+
+            // --- SOAL PILIHAN GANDA (21-30) ---
+            {
+                id: 21,
+                type: 'PG',
+                question: "Kongsi dagang VOC (Vereenigde Oostindische Compagnie) memiliki hak istimewa yang dinamakan Hak Octrooie. Salah satu wewenang dari hak tersebut adalah...",
+                options: [
+                    "A. Mengangkat raja-raja di Eropa",
+                    "B. Mencetak uang sendiri dan memiliki tentara perang",
+                    "C. Menghapuskan sistem perbudakan di Nusantara",
+                    "D. Membangun sekolah untuk rakyat biasa",
+                    "E. Menjual hasil bumi hanya ke negara Inggris"
+                ],
+                answer: 1
+            },
+            {
+                id: 22,
+                type: 'PG',
+                question: "Penyebab utama taktik gerilya Pangeran Diponegoro akhirnya terhenti pada tahun 1830 adalah...",
+                options: [
+                    "A. Diponegoro kehabisan amunisi dan bahan makanan",
+                    "B. Belanda menggunakan penipuan berkedok perundingan damai di Magelang",
+                    "C. Pasukan Diponegoro membelot ke pihak Belanda",
+                    "D. Diponegoro wafat saat memimpin pertempuran",
+                    "E. Seluruh benteng gerilya dihancurkan oleh Inggris"
+                ],
+                answer: 1
+            },
+            {
+                id: 23,
+                type: 'PG',
+                question: "Taktik politik adu domba yang sering digunakan kolonial Belanda untuk memecah belah kerajaan-kerajaan Nusantara dikenal dengan istilah...",
+                options: [
+                    "A. Cultuurstelsel",
+                    "B. Devide et Impera",
+                    "C. Landrent System",
+                    "D. Benteng Stelsel",
+                    "E. Trias Politika"
+                ],
+                answer: 1
+            },
+            {
+                id: 24,
+                type: 'PG',
+                question: "Kebijakan Sistem Sewa Tanah (Landrent System) di Indonesia diperkenalkan oleh pemerintah kolonial pada masa kepemimpinan...",
+                options: [
+                    "A. Herman Willem Daendels",
+                    "B. Thomas Stamford Raffles",
+                    "C. Johannes van den Bosch",
+                    "D. Jan Pieterszoon Coen",
+                    "E. Snouck Hurgronje"
+                ],
+                answer: 1
+            },
+            {
+                id: 25,
+                type: 'PG',
+                question: "Tokoh pahlawan wanita yang melanjutkan perlawanan gigih rakyat Aceh melawan kolonial Belanda setelah Teuku Umar gugur adalah...",
+                options: [
+                    "A. R.A. Kartini",
+                    "B. Cut Nyak Dien",
+                    "C. Dewi Sartika",
+                    "D. Nyi Ageng Serang",
+                    "E. Martha Christina Tiahahu"
+                ],
+                answer: 1
+            },
+            {
+                id: 26,
+                type: 'PG',
+                question: "Pembangunan jaringan kereta api pertama di Pulau Jawa oleh pemerintah kolonial Belanda terutama ditujukan untuk...",
+                options: [
+                    "A. Transportasi publik bagi seluruh masyarakat pribumi",
+                    "B. Mengangkut hasil komoditas perkebunan menuju pelabuhan",
+                    "C. Sarana rekreasi pejabat kolonial",
+                    "D. Menghubungkan istana-istana kerajaan lokal",
+                    "E. Mengirim surat dan dokumen pemerintahan"
+                ],
+                answer: 1
+            },
+            {
+                id: 27,
+                type: 'PG',
+                question: "Tradisi Puputan dalam perlawanan kerajaan-kerajaan di Bali menghadapi Belanda mengandung arti...",
+                options: [
+                    "A. Perundingan damai secara diplomasi",
+                    "B. Perang habis-habisan hingga titik darah penghabisan demi kehormatan",
+                    "C. Penyerahan diri secara sukarela",
+                    "D. Taktik melarikan diri ke hutan",
+                    "E. Kerja sama ekonomi dan perdagangan"
+                ],
+                answer: 1
+            },
+            {
+                id: 28,
+                type: 'PG',
+                question: "Tiga program utama dalam kebijakan Politik Etis yang diusulkan oleh C. Th. van Deventer meliputi...",
+                options: [
+                    "A. Monopoli, Perkebunan, dan Militer",
+                    "B. Irigasi, Emigrasi, dan Edukasi",
+                    "C. Tanam Paksa, Kerja Rodi, dan Pajak",
+                    "D. Eksploitasi, Transmigrasi, dan Monopoli",
+                    "E. Industrialisasi, Perdagangan, dan Edukasi"
+                ],
+                answer: 1
+            },
+            {
+                id: 29,
+                type: 'PG',
+                question: "Dalam struktur stratifikasi sosial masyarakat pada masa pemerintah Kolonial Hindia Belanda, posisi teratas diduduki oleh...",
+                options: [
+                    "A. Golongan Timur Asing (Tionghoa dan Arab)",
+                    "B. Golongan Eropa (Bangsa Barat)",
+                    "C. Golongan Pribumi / Bumiputera",
+                    "D. Kaum Bangsawan Lokal",
+                    "E. Pedagang Muslim"
+                ],
+                answer: 1
+            },
+            {
+                id: 30,
+                type: 'PG',
+                question: "Raja Kesultanan Banten yang gigih memimpin perlawanan menentang monopoli perdagangan VOC di Selat Sunda adalah...",
+                options: [
+                    "A. Sultan Iskandar Muda",
+                    "B. Sultan Ageng Tirtayasa",
+                    "C. Sultan Agung Hanyokrokusumo",
+                    "D. Sultan Baabullah",
+                    "E. Sultan Nuku"
+                ],
+                answer: 1
+            }
+        ];
+
+        // STATE APLIKASI
+        let studentData = { nama: '', kelas: '', kehadiran: '' };
+        let userAnswers = new Array(quizData.length).fill(null);
+        let currentIndex = 0;
+        let lastSubmittedScore = 0;
+        let lastSubmittedCorrect = 0;
+        let lastSubmittedTime = '';
+
+        // NAVIGASI SWITCH TAB MENU
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            const targetNav = document.getElementById(`nav-${tabName}`);
+
+            if (targetTab) targetTab.classList.remove('hidden');
+            if (targetNav) targetNav.classList.add('active');
+
+            if (tabName === 'ujian') {
+                if (!studentData.nama) {
+                    alert("Harap isi data KEHADIRAN terlebih dahulu!");
+                    switchTab('kehadiran');
+                    return;
+                }
+                renderNumberGrid();
+                loadQuestion(currentIndex);
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // SIMPAN IDENTITAS SISWA (DATA ISIAN KEHADIRAN)
+        function saveIdentity() {
+            const nama = document.getElementById('input-nama').value.trim();
+            const kelas = document.getElementById('input-kelas').value;
+            const kehadiran = document.getElementById('input-kehadiran').value;
+
+            if (!nama || !kelas || !kehadiran) {
+                alert("Harap isi semua kolom identitas!");
+                return;
+            }
+
+            studentData = { nama, kelas, kehadiran };
+
+            // Display Badge
+            document.getElementById('registered-info-text').textContent = `Nama: ${nama} | Kelas: ${kelas} | Status: ${kehadiran}`;
+            document.getElementById('registered-badge').classList.remove('hidden');
+            document.getElementById('quiz-student-badge').textContent = `Peserta: ${nama} (${kelas})`;
+
+            // Otomatis kirim data Kehadiran awal ke Google Sheet
+            sendDataToGoogleSheet({
+                tipe: 'kehadiran',
+                nama: studentData.nama,
+                kelas: studentData.kelas,
+                kehadiran: studentData.kehadiran,
+                nilai: 'Belum Ujian',
+                detail: '-',
+                waktu: new Date().toLocaleString('id-ID')
+            });
+
+            switchTab('materi');
+        }
+
+        // RENDER GRID NOMOR SOAL
+        function renderNumberGrid() {
+            const gridContainer = document.getElementById('number-grid');
+            if (!gridContainer) return;
+            
+            gridContainer.innerHTML = '';
+
+            quizData.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => loadQuestion(idx);
+                
+                const isAnswered = userAnswers[idx] !== null;
+                const isCurrent = idx === currentIndex;
+                
+                let btnClasses = "w-9 h-9 text-xs font-bold rounded-lg transition border flex items-center justify-center ";
+                if (isCurrent) {
+                    btnClasses += "ring-2 ring-history-900 border-history-800 bg-history-200 text-history-900 ";
+                } else if (isAnswered) {
+                    btnClasses += "bg-emerald-600 text-white border-emerald-700 ";
+                } else {
+                    btnClasses += "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300 ";
+                }
+
+                btn.className = btnClasses;
+                btn.textContent = idx + 1;
+                gridContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            const progressPct = Math.round((answeredCount / quizData.length) * 100);
+
+            document.getElementById('progress-text').textContent = `${answeredCount} dari ${quizData.length} Terjawab`;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+
+            const btnSubmit = document.getElementById('btn-submit-quiz');
+
+            // Tombol muncul hanya ketika semua 30 soal pilihan ganda sudah dijawab
+            if (answeredCount === quizData.length) {
+                btnSubmit.classList.remove('hidden');
+            } else {
+                btnSubmit.classList.add('hidden');
+            }
+        }
+
+        // LOAD SOAL SESUAI INDEX
+        function loadQuestion(index) {
+            currentIndex = index;
+            const q = quizData[index];
+
+            document.getElementById('question-badge').textContent = `Soal Nomor ${index + 1}`;
+            document.getElementById('question-type-tag').textContent = 'Pilihan Ganda';
+            document.getElementById('question-text').innerHTML = q.question;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                const label = document.createElement('label');
+                label.className = `flex items-center p-3.5 sm:p-4 rounded-xl border-2 cursor-pointer transition select-none ${
+                    isSelected 
+                        ? 'border-history-700 bg-history-100 font-semibold shadow-sm' 
+                        : 'border-gray-200 hover:border-history-600 hover:bg-history-50'
+                }`;
+
+                label.innerHTML = `
+                    <input type="radio" name="quiz-opt" value="${optIdx}" ${isSelected ? 'checked' : ''} onchange="selectAnswer(${optIdx})" class="w-4 h-4 text-history-800 border-gray-300 focus:ring-history-600">
+                    <span class="ml-3 text-sm sm:text-base text-gray-800">${optText}</span>
+                `;
+                container.appendChild(label);
+            });
+
+            document.getElementById('btn-prev').disabled = index === 0;
+            document.getElementById('btn-prev').classList.toggle('opacity-50', index === 0);
+
+            if (index === quizData.length - 1) {
+                document.getElementById('btn-next').classList.add('hidden');
+            } else {
+                document.getElementById('btn-next').classList.remove('hidden');
+            }
+
+            renderNumberGrid();
+        }
+
+        function selectAnswer(optIndex) {
+            userAnswers[currentIndex] = optIndex;
+            renderNumberGrid();
+        }
+
+        function navigateQuestion(direction) {
+            const target = currentIndex + direction;
+            if (target >= 0 && target < quizData.length) {
+                loadQuestion(target);
+            }
+        }
+
+        function resetToHome() {
+            document.getElementById('form-identity').reset();
+            document.getElementById('registered-badge').classList.add('hidden');
+            studentData = { nama: '', kelas: '', kehadiran: '' };
+            userAnswers = new Array(quizData.length).fill(null);
+            currentIndex = 0;
+
+            document.getElementById('quiz-working-screen').classList.remove('hidden');
+            document.getElementById('quiz-score-screen').classList.add('hidden');
+
+            switchTab('kehadiran');
+        }
+
+        // HITUNG NILAI & TAMPILKAN DI DASHBOARD SISWA MENU "NILAI" BESERTA KIRIM KE GOOGLE SHEET
+        function submitQuiz() {
+            let correctCount = 0;
+            quizData.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            // Perhitungan skor langsung: Jika benar 30 soal = 100
+            const score = Math.round((correctCount / quizData.length) * 100);
+            const nowString = new Date().toLocaleString('id-ID');
+
+            lastSubmittedScore = score;
+            lastSubmittedCorrect = correctCount;
+            lastSubmittedTime = nowString;
+
+            // TAMPILKAN SKOR SECARA LANGSUNG DI DASHBOARD SISWA
+            document.getElementById('score-page-nilai').textContent = score;
+            document.getElementById('score-page-correct-detail').textContent = `${correctCount} / ${quizData.length}`;
+            document.getElementById('score-page-percentage').textContent = `${score}%`;
+            document.getElementById('score-page-nama').textContent = studentData.nama;
+            document.getElementById('score-page-kelas').textContent = studentData.kelas;
+            document.getElementById('score-page-kehadiran').textContent = studentData.kehadiran;
+            document.getElementById('score-page-waktu').textContent = nowString;
+
+            const statusBox = document.getElementById('score-page-sheet-status');
+            if (statusBox) {
+                statusBox.className = "mb-5 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center justify-center space-x-2";
+                statusBox.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Mengirimkan data nilai (${score}) ke Google Sheet...</span>`;
+            }
+
+            // PINDAH TAMPILAN KE DASHBOARD NILAI SISWA
+            document.getElementById('quiz-working-screen').classList.add('hidden');
+            document.getElementById('quiz-score-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // SINKRONISASI OTOMATIS KE GOOGLE SHEET
+            sendDataToGoogleSheet({
+                tipe: 'ujian',
+                nama: studentData.nama,
+                kelas: studentData.kelas,
+                kehadiran: studentData.kehadiran,
+                nilai: score,
+                detail: `${correctCount}/${quizData.length}`,
+                waktu: nowString
+            });
+        }
+
+        function manualSendToSheet() {
+            if (!studentData.nama) {
+                alert("Data siswa belum tersedia!");
+                return;
+            }
+
+            const nowString = lastSubmittedTime || new Date().toLocaleString('id-ID');
+            const statusBox = document.getElementById('score-page-sheet-status');
+            
+            if (statusBox) {
+                statusBox.className = "mb-5 p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center justify-center space-x-2";
+                statusBox.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Mengirimkan ulang data nilai ke Google Sheet...</span>`;
+            }
+
+            sendDataToGoogleSheet({
+                tipe: 'ujian',
+                nama: studentData.nama,
+                kelas: studentData.kelas,
+                kehadiran: studentData.kehadiran,
+                nilai: lastSubmittedScore,
+                detail: `${lastSubmittedCorrect}/${quizData.length}`,
+                waktu: nowString
+            });
+        }
+
+        function sendDataToGoogleSheet(payload) {
+            const statusBox = document.getElementById('score-page-sheet-status');
+            
+            const formData = new FormData();
+            formData.append('tipe', payload.tipe || 'ujian');
+            formData.append('nama', payload.nama);
+            formData.append('kelas', payload.kelas);
+            formData.append('kehadiran', payload.kehadiran);
+            formData.append('nilai', payload.nilai);
+            formData.append('detail', payload.detail);
+            formData.append('waktu', payload.waktu);
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                if (payload.tipe === 'ujian' && statusBox) {
+                    statusBox.className = "mb-5 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-center space-x-2";
+                    statusBox.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 text-base"></i><span>Data nilai berhasil terkirim ke Google Sheet!</span>`;
+                }
+            })
+            .catch(error => {
+                console.error("Error Sheet:", error);
+                if (payload.tipe === 'ujian' && statusBox) {
+                    statusBox.className = "mb-5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center justify-center space-x-2";
+                    statusBox.innerHTML = `<i class="fa-solid fa-circle-info text-amber-600 text-base"></i><span>Gagal otomatis. Silakan klik tombol 'Kirim Nilai' di bawah.</span>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
